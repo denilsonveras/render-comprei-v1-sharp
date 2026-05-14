@@ -1,20 +1,19 @@
-# RENDER_COMPREI_V1_SHARP
+# Render Comprei V1.3 Sharp — Font Fix definitivo
 
-Renderizador HTTP para gerar 3 cards JPG 1280x720 para imóveis COMPREI/PGFN.
+Versão atual para substituir as anteriores V1.1/V1.2.
 
-## Deploy na Vercel
+Correção principal:
+- Não depende de fonte do sistema da Vercel.
+- Usa Roboto TTF embutida a partir do pacote `pdfmake/build/vfs_fonts.js`.
+- Injeta a fonte em base64 dentro do próprio SVG via `@font-face`.
+- Salva em caminho novo para evitar cache: `comprei/{imovel_id}/v13-{timestamp}/card1.jpg`.
 
-Configure as variáveis:
+Endpoints:
+- GET `/api/render-comprei` retorna status.
+- POST gera 3 JPGs 1280x720, salva no Supabase Storage e retorna `cards_urls` e `cards_data_uri`.
 
-SUPABASE_URL=https://lxllourtsmaxahljokfz.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=...
-SUPABASE_BUCKET=imagens
-RENDER_API_TOKEN=crie_um_token_forte
-
-Endpoint:
-POST /api/render-comprei
-
-Retorna:
-- cards_urls
-- cards_data_uri
-- valida magic bytes JPEG FF D8 FF
+Variáveis de ambiente:
+- SUPABASE_URL
+- SUPABASE_SERVICE_ROLE_KEY
+- SUPABASE_BUCKET=imagens
+- RENDER_API_TOKEN

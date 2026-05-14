@@ -1,10 +1,19 @@
 {
-  "imovel_id": "comprei_pgfn_1051024",
-  "origem_id": "1051024",
-  "titulo": "Terreno destinado à construção",
-  "cidade": "Aurora",
+  "imovel_id": "comprei_pgfn_1201003",
+  "origem_id": "1201003",
+  "titulo": "Apartamento nº 202, Edifício Residencial, Rua Barão de Aracati, Aldeota, Fortaleza/CE",
+  "cidade": "Fortaleza",
   "estado": "CE",
-  "bairro": "CENTRO",
-  "valor_venda": 108000,
-  "area_util": 250
+  "bairro": "Aldeota",
+  "valor_venda": 220000,
+  "valor_avaliacao": 220000,
+  "area_util": 1,
+  "matricula": "84714",
+  "cartorio": "Fortaleza Registro de Imóveis da Segunda Zona",
+  "fase_atual": "Aguardando publicação",
+  "percentual_minimo_valor_avista": 50,
+  "percentual_minimo_valor_entrada": 25,
+  "percentual_minimo_valor_parcelado": 50,
+  "quantidade_maxima_parcelas": 59,
+  "documentos_drive_url": "https://drive.google.com/..."
 }
