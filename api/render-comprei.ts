@@ -91,6 +91,39 @@ function fontCss(): string {
   return fontCssCache;
 }
 
+
+function text(x: number, y: number, value: string, size: number, fill = '#ffffff', weight = 700, extra = ''): string {
+  return `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" ${extra}>${esc(value)}</text>`;
+}
+
+function titleBlock(t: string, x = 84, y = 232, size = 52, max = 32, lines = 2): string {
+  return wrap(t, max, lines).map((line, i) => text(x, y + i * Math.round(size * 1.16), line, size, '#ffffff', 900)).join('');
+}
+
+function bulletList(items: string[], x = 112, y = 424): string {
+  return items.filter(Boolean).slice(0, 5).map((item, i) => {
+    const yy = y + i * 48;
+    return `<circle cx="${x}" cy="${yy - 9}" r="7" fill="#facc15"/>${text(x + 26, yy, cut(item, 54), 25, '#ffffff', 700)}`;
+  }).join('');
+}
+
+function ribbon(label: string, color: string): string {
+  return `<rect x="914" y="72" width="248" height="52" rx="26" fill="${color}"/>${text(1038, 107, cut(label, 22), 21, '#071B3E', 900, 'text-anchor="middle"')}`;
+}
+
+function baseSvg(accent = '#facc15'): string {
+  return `<defs>
+    <style>${fontCss()}</style>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#061a40"/><stop offset="58%" stop-color="#0b2b63"/><stop offset="100%" stop-color="#123d7a"/></linearGradient>
+    <radialGradient id="glow" cx="83%" cy="18%" r="62%"><stop offset="0%" stop-color="${accent}" stop-opacity=".28"/><stop offset="100%" stop-color="${accent}" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#bg)"/><rect width="${WIDTH}" height="${HEIGHT}" fill="url(#glow)"/>
+  <rect x="48" y="40" width="1184" height="640" rx="34" fill="none" stroke="#ffffff" stroke-width="3" opacity=".72"/>
+  <circle cx="112" cy="98" r="31" fill="#ffffff"/>${text(112, 110, 'V', 34, '#071B3E', 900, 'text-anchor="middle"')}
+  ${text(162, 96, 'VERAS NEGOCIOS IMOBILIARIOS', 27, '#ffffff', 900)}
+  ${text(162, 126, 'Especialista em imoveis PGFN / Comprei', 18, '#cfe3ff', 400)}`;
+}
+
 function cardSvg({ variant, title, subtitle, badge, bullets, footer, sideTitle, sideValue }: any): string {
   const accent = variant === 1 ? '#facc15' : variant === 2 ? '#38bdf8' : '#34d399';
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
@@ -211,7 +244,7 @@ function build(input: any) {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
-    return res.status(200).json({ ok: true, service: 'render-comprei-v1-3-sharp', cards: 'pgfn-font-fix-v1-2' });
+    return res.status(200).json({ ok: true, service: 'render-comprei-v1-3-1-sharp', cards: 'pgfn-font-embedded-v1-3-1' });
   }
   if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'Use POST' });
   try {
@@ -223,7 +256,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const input = req.body;
     if (!input?.imovel_id) return res.status(400).json({ ok: false, error: 'Informe imovel_id' });
 
-    const versionPath = `v13-${Date.now()}`;
+    const versionPath = `v131-${Date.now()}`;
     const out: any[] = [];
     for (const c of build(input)) {
       const buf = await toJpg(c.svg);
@@ -244,7 +277,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     return res.status(200).json({
       ok: true,
-      service: 'render-comprei-v1-3-sharp',
+      service: 'render-comprei-v1-3-1-sharp',
       imovel_id: input.imovel_id,
       cards_urls: out.map(x => x.url),
       cards_data_uri: out.map(x => x.data_uri),
