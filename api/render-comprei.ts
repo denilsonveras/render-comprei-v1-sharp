@@ -5,9 +5,7 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import React from 'react';
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
+import path from 'node:path';
 const WIDTH = 1280;
 const HEIGHT = 720;
 
@@ -69,20 +67,43 @@ function numFirst(...vals: unknown[]): unknown {
 
 let fontsCache: any[] | null = null;
 
-function fontPath(p: string) {
-  return require.resolve(p);
+function findFontFile(weight: 400 | 700): string {
+  // @fontsource v5 normalmente instala WOFF2, não WOFF.
+  // Não usamos require.resolve do subpath porque alguns pacotes bloqueiam subpaths por exports.
+  const filesDir = path.join(process.cwd(), 'node_modules', '@fontsource', 'noto-sans', 'files');
+  if (!fs.existsSync(filesDir)) {
+    throw new Error(`Diretório de fontes não encontrado: ${filesDir}`);
+  }
+
+  const files = fs.readdirSync(filesDir);
+  const preferred = [
+    `noto-sans-latin-${weight}-normal.woff2`,
+    `noto-sans-latin-${weight}-normal.woff`,
+    `noto-sans-latin-ext-${weight}-normal.woff2`,
+    `noto-sans-latin-ext-${weight}-normal.woff`
+  ];
+
+  for (const name of preferred) {
+    const full = path.join(filesDir, name);
+    if (fs.existsSync(full)) return full;
+  }
+
+  const re = new RegExp(`noto-sans.*latin.*${weight}.*normal.*\\.woff2?$`, 'i');
+  const found = files.find(f => re.test(f));
+  if (found) return path.join(filesDir, found);
+
+  throw new Error(`Fonte Noto Sans ${weight} não encontrada. Arquivos disponíveis: ${files.slice(0, 25).join(', ')}`);
 }
 
 function loadFonts() {
   if (fontsCache) return fontsCache;
 
-  // Satori recebe a fonte como bytes; isso evita depender da fonte do sistema da Vercel/Sharp.
-  const regular = fs.readFileSync(fontPath('@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff'));
-  const bold = fs.readFileSync(fontPath('@fontsource/noto-sans/files/noto-sans-latin-700-normal.woff'));
+  const regularPath = findFontFile(400);
+  const boldPath = findFontFile(700);
 
   fontsCache = [
-    { name: 'Noto Sans', data: regular, weight: 400, style: 'normal' },
-    { name: 'Noto Sans', data: bold, weight: 700, style: 'normal' }
+    { name: 'Noto Sans', data: fs.readFileSync(regularPath), weight: 400, style: 'normal' },
+    { name: 'Noto Sans', data: fs.readFileSync(boldPath), weight: 700, style: 'normal' }
   ];
   return fontsCache;
 }
@@ -270,9 +291,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
     return res.status(200).json({
       ok: true,
-      service: 'render-comprei-v1-4-satori-resvg',
+      service: 'render-comprei-v1-4-1-satori-resvg-font-path-fix',
       engine: 'satori-resvg-sharp',
-      font: 'noto-sans-via-fontsource'
+      font: 'noto-sans-fontsource-woff2-path-fix'
     });
   }
 
@@ -288,7 +309,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const input = req.body || {};
     if (!input.imovel_id) return res.status(400).json({ ok: false, error: 'Informe imovel_id' });
 
-    const versionPath = `v14-${Date.now()}`;
+    const versionPath = `v141-${Date.now()}`;
     const cards = buildCards(input);
     const out: any[] = [];
 
@@ -312,7 +333,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(200).json({
       ok: true,
-      service: 'render-comprei-v1-4-satori-resvg',
+      service: 'render-comprei-v1-4-1-satori-resvg-font-path-fix',
       imovel_id: input.imovel_id,
       cards_urls: out.map(x => x.url),
       cards_data_uri: out.map(x => x.data_uri),
@@ -330,6 +351,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     });
   } catch (err: any) {
-    return res.status(500).json({ ok: false, service: 'render-comprei-v1-4-satori-resvg', error: err?.message || 'Erro desconhecido' });
+    return res.status(500).json({ ok: false, service: 'render-comprei-v1-4-1-satori-resvg-font-path-fix', error: err?.message || 'Erro desconhecido' });
   }
 }
