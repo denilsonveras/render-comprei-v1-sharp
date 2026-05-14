@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "api/render-comprei.ts": {
+      "maxDuration": 15,
+      "memory": 1024
+    }
+  }
+}

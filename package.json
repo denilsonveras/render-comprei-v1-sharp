@@ -1,0 +1,22 @@
+{
+  "name": "render-comprei-v1-sharp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@vercel/node": "^5.0.0",
+    "typescript": "^5.8.2",
+    "vercel": "^41.4.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

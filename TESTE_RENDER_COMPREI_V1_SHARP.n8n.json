@@ -1,0 +1,122 @@
+{
+  "name": "TESTE_RENDER_COMPREI_V1_SHARP",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const RENDER_ENDPOINT = 'COLE_AQUI_URL_DO_RENDER/api/render-comprei';\nconst RENDER_TOKEN = 'COLE_AQUI_RENDER_API_TOKEN';\nreturn [{json:{render_endpoint:RENDER_ENDPOINT,render_token:RENDER_TOKEN,payload:{imovel_id:'comprei_pgfn_1051024',origem_id:'1051024',titulo:'Terreno destinado à construção',cidade:'Aurora',estado:'CE',bairro:'CENTRO',valor_venda:108000,area_util:250}}}];"
+      },
+      "id": "cfg",
+      "name": "Configurar Teste Render",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.render_endpoint }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $json.render_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.payload }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "id": "http",
+      "name": "Chamar Render Comprei",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "if (!$json.ok) throw new Error('Render retornou erro: '+JSON.stringify($json));\nif (!Array.isArray($json.cards_data_uri) || $json.cards_data_uri.length < 3) throw new Error('Render não retornou 3 cards_data_uri.');\nfor (const [idx, uri] of $json.cards_data_uri.entries()) { if (!String(uri).startsWith('data:image/jpeg;base64,/9j/')) throw new Error(`Card ${idx+1} não parece JPEG válido.`); }\nreturn [{json:{ok:true,cards_urls:$json.cards_urls,cards_count:$json.cards_data_uri.length,first_card_prefix:$json.cards_data_uri[0].slice(0,80)}}];"
+      },
+      "id": "val",
+      "name": "Validar Retorno Render",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Configurar Teste Render",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configurar Teste Render": {
+      "main": [
+        [
+          {
+            "node": "Chamar Render Comprei",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chamar Render Comprei": {
+      "main": [
+        [
+          {
+            "node": "Validar Retorno Render",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0
+}
