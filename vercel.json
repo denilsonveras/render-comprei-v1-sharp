@@ -1,8 +1,10 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/render-comprei.ts": {
-      "maxDuration": 60,
-      "memory": 1024
+    "api/render-comprei.js": {
+      "memory": 1024,
+      "maxDuration": 30,
+      "includeFiles": "fonts/**"
     }
   }
 }

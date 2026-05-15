@@ -1,26 +1,19 @@
 {
-  "name": "render-comprei-v1-4-1-satori-resvg-font-path-fix",
-  "version": "1.4.1",
+  "name": "render-comprei-v1-sharp-current",
+  "version": "1.5.2",
+  "description": "Renderizador VERAS COMPREI/PGFN para repo render-comprei-v1-sharp: 3 cards JPG 1280x720 via Satori + Resvg + Sharp, com TTF local.",
   "private": true,
   "type": "module",
+  "engines": { "node": ">=18" },
   "scripts": {
     "dev": "vercel dev",
-    "start": "vercel dev"
+    "deploy": "vercel --prod",
+    "check": "node --check api/render-comprei.js"
   },
   "dependencies": {
-    "@fontsource/noto-sans": "^5.2.5",
     "@resvg/resvg-js": "^2.6.2",
-    "@supabase/supabase-js": "^2.49.1",
-    "@vercel/node": "^5.0.0",
-    "react": "^19.0.0",
-    "satori": "^0.12.2",
+    "@supabase/supabase-js": "^2.45.4",
+    "satori": "^0.11.3",
     "sharp": "^0.33.5"
-  },
-  "devDependencies": {
-    "typescript": "^5.8.2",
-    "vercel": "^41.4.1"
-  },
-  "engines": {
-    "node": ">=20"
   }
 }
