@@ -1,4 +1,4 @@
-# Render Comprei/PGFN — V1.5.4
+# Render Comprei/PGFN — V1.5.5
 
 Renderizador VERAS para cards JPG 1280x720 da plataforma Comprei/PGFN.
 
@@ -28,7 +28,7 @@ Coloque somente estes arquivos em `/fonts`:
 
 Não usar WOFF2.
 
-## V1.5.4
+## V1.5.5
 
 - Card 1: venda principal do imóvel, endereço, valor, avaliação, área segura e código.
 - Card 2: condições de proposta, cronologia das etapas, fase atual e próxima etapa prevista.

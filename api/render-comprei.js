@@ -1,5 +1,5 @@
 // api/render-comprei.js
-// VERAS — Renderizador COMPREI/PGFN V1.5.4 — PATCH PARA REPO render-comprei-v1-sharp
+// VERAS — Renderizador COMPREI/PGFN V1.5.5 — PATCH PARA REPO render-comprei-v1-sharp
 // Stack recomendada pelas respostas anexadas: Satori + Resvg + Sharp + TTF local.
 // Sem Puppeteer. Sem WOFF2. Sem depender de fonte do sistema da Vercel.
 
@@ -13,7 +13,7 @@ import crypto from 'node:crypto';
 
 import { card1, card2, card3, BG1, BG2, BG3, normalizedDebug } from '../lib/templates.js';
 
-const SERVICE = 'render-comprei-v1-sharp-current-v1-5-4-satori-resvg-sharp-ttf';
+const SERVICE = 'render-comprei-v1-sharp-current-v1-5-5-satori-resvg-sharp-ttf';
 const WIDTH = 1280;
 const HEIGHT = 720;
 
@@ -183,7 +183,7 @@ function safeId(v) {
 function buildStorageBase(input) {
   const id = safeId(input.imovel_id || input.codigo || input.origem_id || input.idBem);
   const hash = crypto.createHash('sha1').update(JSON.stringify(input)).digest('hex').slice(0, 10);
-  return `comprei/${id}/v154-${hash}`;
+  return `comprei/${id}/v155-${hash}`;
 }
 
 export default async function handler(req, res) {
