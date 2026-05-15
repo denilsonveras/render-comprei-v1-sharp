@@ -1,34 +1,36 @@
-# Render Comprei V1.5.3
+# Render Comprei/PGFN — V1.5.4
 
-Renderizador de cards VERAS para Comprei/PGFN.
+Renderizador VERAS para cards JPG 1280x720 da plataforma Comprei/PGFN.
 
-## Stack
-
+Stack:
 - Vercel Function Node.js
 - Satori + Resvg + Sharp
-- Fonte TTF local Inter
 - Supabase Storage
+- Fonte Inter TTF local
+
+## Endpoint
+
+`/api/render-comprei`
+
+GET retorna diagnóstico do serviço e das fontes.
+POST recebe os dados do imóvel e retorna:
+- `cards_urls`
+- `cards_data_uri`
+- metadados dos cards
 
 ## Fontes necessárias
 
-Coloque em `fonts/` apenas:
+Coloque somente estes arquivos em `/fonts`:
 
 - `Inter_18pt-Regular.ttf`
 - `Inter_18pt-Bold.ttf`
 - `Inter_18pt-Black.ttf`
 
-Não use WOFF2.
+Não usar WOFF2.
 
-## Endpoint
+## V1.5.4
 
-GET/POST `/api/render-comprei`
-
-GET deve retornar `font_status.ok = true`.
-
-## Melhorias V1.5.3
-
-- títulos mais curtos e comerciais;
-- inferência de tipo a partir do título, evitando apartamento sair como terreno;
-- correção de overflow no cartório/documentação;
-- fallbacks `Consultar` no lugar de `0` ou travessões excessivos;
-- cards salvos em pasta `v153-{hash}`.
+- Card 1: venda principal do imóvel, endereço, valor, avaliação, área segura e código.
+- Card 2: condições de proposta, cronologia das etapas, fase atual e próxima etapa prevista.
+- Card 3: documentação disponível para análise e contato.
+- Se o imóvel estiver em `Compra em andamento` ou `Bem finalizado`, o debug marca `phase.removeFromList = true` para o n8n remover/suspender da lista comercial.
