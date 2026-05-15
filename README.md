@@ -1,58 +1,34 @@
-# Render Comprei — repo render-comprei-v1-sharp — versão atual V1.5.2
+# Render Comprei V1.5.3
 
-Esta versão substitui o renderizador antigo no repositório inicial `render-comprei-v1-sharp`, mantendo o mesmo endpoint:
+Renderizador de cards VERAS para Comprei/PGFN.
 
-```txt
-/api/render-comprei
-```
+## Stack
 
-## Estrutura obrigatória
+- Vercel Function Node.js
+- Satori + Resvg + Sharp
+- Fonte TTF local Inter
+- Supabase Storage
 
-```txt
-api/render-comprei.js
-lib/templates.js
-fonts/Inter_18pt-Regular.ttf
-fonts/Inter_18pt-Bold.ttf
-fonts/Inter_18pt-Black.ttf
-package.json
-vercel.json
-```
+## Fontes necessárias
 
-## Fontes
+Coloque em `fonts/` apenas:
 
-Coloque manualmente na pasta `fonts/` apenas:
+- `Inter_18pt-Regular.ttf`
+- `Inter_18pt-Bold.ttf`
+- `Inter_18pt-Black.ttf`
 
-```txt
-Inter_18pt-Regular.ttf
-Inter_18pt-Bold.ttf
-Inter_18pt-Black.ttf
-```
+Não use WOFF2.
 
-Não use WOFF2. Não precisa subir 24pt, 28pt, Italic, Light, Medium etc.
+## Endpoint
 
-## Variáveis da Vercel
+GET/POST `/api/render-comprei`
 
-```txt
-SUPABASE_URL
-SUPABASE_SERVICE_ROLE_KEY
-SUPABASE_BUCKET=imagens
-RENDER_API_TOKEN
-```
+GET deve retornar `font_status.ok = true`.
 
-O `RENDER_API_TOKEN` precisa ser igual ao token configurado no n8n.
+## Melhorias V1.5.3
 
-## Teste
-
-Após o deploy, abra:
-
-```txt
-https://render-comprei-v1-sharp.vercel.app/api/render-comprei
-```
-
-O retorno precisa mostrar:
-
-```json
-"font_status": { "ok": true }
-```
-
-Se `font_status.ok` vier `false`, a Vercel não encontrou as fontes TTF.
+- títulos mais curtos e comerciais;
+- inferência de tipo a partir do título, evitando apartamento sair como terreno;
+- correção de overflow no cartório/documentação;
+- fallbacks `Consultar` no lugar de `0` ou travessões excessivos;
+- cards salvos em pasta `v153-{hash}`.
