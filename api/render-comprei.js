@@ -21,6 +21,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SUPABASE_BUCKET = process.env.SUPABASE_BUCKET || 'imagens';
 const RENDER_API_TOKEN = process.env.RENDER_API_TOKEN || process.env.RENDER_TOKEN || '';
+const VERAS_COMPREI_RENDER_TOKEN = process.env.VERAS_COMPREI_RENDER_TOKEN || '';
 
 // Aceita tanto os nomes simplificados quanto os nomes baixados do Google Fonts,
 // que geralmente vêm com o eixo ótico no nome: Inter_18pt-Regular.ttf, etc.
@@ -133,9 +134,23 @@ function getSupabase() {
 }
 
 function authOk(req) {
-  if (!RENDER_API_TOKEN) return true;
+  const allowedTokens = [RENDER_API_TOKEN, VERAS_COMPREI_RENDER_TOKEN].filter(Boolean);
+  if (allowedTokens.length === 0) return false;
+
   const header = String(req.headers.authorization || '');
-  return header === `Bearer ${RENDER_API_TOKEN}`;
+  if (!header.startsWith('Bearer ')) return false;
+
+  const candidate = header.slice('Bearer '.length);
+  if (!candidate) return false;
+
+  const candidateBuffer = Buffer.from(candidate);
+  return allowedTokens.some((token) => {
+    const tokenBuffer = Buffer.from(token);
+    return (
+      candidateBuffer.length === tokenBuffer.length &&
+      crypto.timingSafeEqual(candidateBuffer, tokenBuffer)
+    );
+  });
 }
 
 async function renderJpg(tree, bgColor) {
