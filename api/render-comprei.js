@@ -13,7 +13,7 @@ import crypto from 'node:crypto';
 
 import { card1, card2, card3, BG1, BG2, BG3, normalizedDebug } from '../lib/templates.js';
 
-const SERVICE = 'render-comprei-v1-sharp-current-v1-5-6-satori-resvg-sharp-ttf';
+const SERVICE = 'render-comprei-v1-sharp-current-v1-5-7-data-uri-mode-satori-resvg-sharp-ttf';
 const WIDTH = 1280;
 const HEIGHT = 720;
 
@@ -243,13 +243,28 @@ export default async function handler(req, res) {
       renderJpg(card3(input), BG3),
     ]);
 
+    const storageMode = String(input.storage_mode || 'legacy').trim().toLowerCase();
+    if (!['legacy', 'data_uri_only'].includes(storageMode)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'storage_mode inválido. Use legacy ou data_uri_only.',
+      });
+    }
+
     const base = buildStorageBase(input);
     const keys = [`${base}/card1.jpg`, `${base}/card2.jpg`, `${base}/card3.jpg`];
-    const [url1, url2, url3] = await Promise.all([
-      upload(jpg1, keys[0]),
-      upload(jpg2, keys[1]),
-      upload(jpg3, keys[2]),
-    ]);
+
+    let url1 = null;
+    let url2 = null;
+    let url3 = null;
+
+    if (storageMode === 'legacy') {
+      [url1, url2, url3] = await Promise.all([
+        upload(jpg1, keys[0]),
+        upload(jpg2, keys[1]),
+        upload(jpg3, keys[2]),
+      ]);
+    }
 
     const cards = [
       { filename: 'card1.jpg', path: keys[0], url: url1, mime_type: 'image/jpeg', width: WIDTH, height: HEIGHT, bytes: jpg1.length, magic_hex: jpg1.subarray(0, 3).toString('hex') },
@@ -262,7 +277,8 @@ export default async function handler(req, res) {
       service: SERVICE,
       imovel_id: input.imovel_id || null,
       origem_id: input.origem_id || input.codigo || null,
-      cards_urls: [url1, url2, url3],
+      storage_mode: storageMode,
+      cards_urls: storageMode === 'legacy' ? [url1, url2, url3] : [],
       cards_data_uri: [
         `data:image/jpeg;base64,${jpg1.toString('base64')}`,
         `data:image/jpeg;base64,${jpg2.toString('base64')}`,
