@@ -13,7 +13,7 @@ import crypto from 'node:crypto';
 
 import { card1, card2, card3, BG1, BG2, BG3, normalizedDebug } from '../lib/templates.js';
 
-const SERVICE = 'render-comprei-v1-sharp-current-v1-5-7-data-uri-mode-satori-resvg-sharp-ttf';
+const SERVICE = 'render-comprei-v1-sharp-current-v1-5-8-explicit-phase-title-data-uri-satori-resvg-sharp-ttf';
 const WIDTH = 1280;
 const HEIGHT = 720;
 
